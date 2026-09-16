@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="{{ language|default('en') }}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% if language == 'kn' %}ರೋಗ ವಿಶ್ಲೇಷಣೆ ಫಲಿತಾಂಶ{% elif language == 'hi' %}रोग विश्लेषण परिणाम{% else %}Disease Analysis Result{% endif %} | YieldNext</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:"Segoe UI",Arial,sans-serif;color:#173222;background:linear-gradient(135deg,#f4faf5,#eef7f0)}
+.topbar{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:12px 6%;background:#fff;border-bottom:1px solid #e0e9e2}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:21px}
+.logo{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#2e7d32,#66bb6a);color:#fff;font-size:21px}
+.tools{display:flex;align-items:center;gap:10px}
+.language{border:1px solid #d8e4db;background:#fff;border-radius:11px;padding:10px 12px;color:#245c2d;font-weight:700;cursor:pointer}
+.back{color:#2e7d32;background:#edf7ef;padding:10px 14px;border-radius:11px;text-decoration:none;font-weight:700}
+.container{width:min(1080px,92%);margin:42px auto 60px}
+.head{text-align:center;margin-bottom:30px}
+.head>div{color:#43a047;font-size:12px;font-weight:800;letter-spacing:2px;margin-bottom:9px}
+.head h1{margin:0;font-size:clamp(30px,5vw,46px)}
+.head p{margin-top:9px;color:#718078}
+.grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:24px}
+.card{background:#fff;border:1px solid #e0e9e2;border-radius:24px;padding:24px;box-shadow:0 14px 40px rgba(25,65,36,.07)}
+.photo{width:100%;aspect-ratio:1/1;border-radius:18px;overflow:hidden;background:#edf3ee}
+.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.conf{margin-top:18px;padding:15px;border-radius:16px;background:#eff8f1}
+.row{display:flex;justify-content:space-between;gap:10px;margin-bottom:9px;font-weight:700}
+.bar{height:10px;width:100%;border-radius:99px;overflow:hidden;background:#dce9df}
+.fill{height:100%;width:0;max-width:100%;border-radius:inherit;background:linear-gradient(90deg,#43a047,#81c784);transition:width .5s ease}
+.result-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:22px}
+.icon{width:52px;height:52px;flex-shrink:0;display:grid;place-items:center;border-radius:16px;background:#eaf7ec;font-size:25px}
+.result-head h2{margin:0;font-size:27px;line-height:1.2}
+.result-head small{display:block;color:#7b8880;margin-top:6px}
+.info{display:grid;gap:14px}
+.info-box{padding:17px;border:1px solid #e6eee8;border-radius:17px;background:#f8faf8}
+.info-box h3{margin:0 0 7px;font-size:14px}
+.info-box p{margin:0;color:#64736a;line-height:1.65;font-size:14px}
+.model-class{margin-top:15px;padding:12px;border-radius:12px;background:#f5f8f5;color:#69766e;font-size:12px;word-break:break-word}
+.actions{display:flex;gap:12px;margin-top:22px}
+.btn{flex:1;min-height:48px;display:grid;place-items:center;border-radius:13px;text-decoration:none;font-weight:800;font-size:14px}
+.primary{color:#fff;background:linear-gradient(135deg,#2e7d32,#43a047)}
+.secondary{color:#2e7d32;background:#edf7ef}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.photo{aspect-ratio:4/3}}
+@media(max-width:520px){.brand span{display:none}.topbar{padding:12px 4%}.actions{flex-direction:column}}
+</style>
+</head>
+<body>
+<header class="topbar">
+<div class="brand"><div class="logo">🌱</div><span>YieldNext</span></div>
+<div class="tools">
+<select class="language" id="languageSelect" aria-label="Select language">
+<option value="en" {% if language|default('en') == 'en' %}selected{% endif %}>🇬🇧 English</option>
+<option value="kn" {% if language|default('en') == 'kn' %}selected{% endif %}>🇮🇳 ಕನ್ನಡ</option>
+<option value="hi" {% if language|default('en') == 'hi' %}selected{% endif %}>🇮🇳 हिन्दी</option>
+</select>
+<a class="back" href="{{ url_for('disease_detection') }}">{% if language == 'kn' %}← ಹೊಸ ವಿಶ್ಲೇಷಣೆ{% elif language == 'hi' %}← नया विश्लेषण{% else %}← New Analysis{% endif %}</a>
+</div>
+</header>
+
+<main class="container">
+<section class="head">
+<div>🌿 AI CROP HEALTH</div>
+<h1>{% if language == 'kn' %}ರೋಗ ವಿಶ್ಲೇಷಣೆ ಫಲಿತಾಂಶ{% elif language == 'hi' %}रोग विश्लेषण परिणाम{% else %}Disease Analysis Result{% endif %}</h1>
+<p>{% if language == 'kn' %}ನಿಮ್ಮ ಎಲೆಯ AI ಆಧಾರಿತ ವಿಶ್ಲೇಷಣೆ{% elif language == 'hi' %}आपके पत्ते का AI आधारित विश्लेषण{% else %}AI-powered analysis of your uploaded leaf{% endif %}</p>
+</section>
+
+<section class="grid">
+<div class="card">
+<div class="photo">
+<img src="{{ url_for('static', filename='uploads/' ~ image_file) }}" alt="Crop leaf">
+</div>
+<div class="conf">
+<div class="row">
+<span>{% if language == 'kn' %}AI ವಿಶ್ವಾಸ{% elif language == 'hi' %}AI विश्वास{% else %}AI Confidence{% endif %}</span>
+<span>{{ confidence|default(0,true)|float|round(2) }}%</span>
+</div>
+<div class="bar">
+<div class="fill" id="confidenceFill" data-confidence="{{ confidence|default(0,true)|float }}"></div>
+</div>
+</div>
+</div>
+
+<div class="card">
+<div class="result-head">
+<div class="icon">🦠</div>
+<div>
+<h2>{{ disease|default('Unknown') }}</h2>
+<small>{% if language == 'kn' %}YieldNext AI ಪತ್ತೆ{% elif language == 'hi' %}YieldNext AI द्वारा पता लगाया गया{% else %}Detected by YieldNext AI{% endif %}</small>
+</div>
+</div>
+
+<div class="info">
+<div class="info-box">
+<h3>{% if language == 'kn' %}🔬 ಕಾರಣ / ವಿವರಣೆ{% elif language == 'hi' %}🔬 कारण / विवरण{% else %}🔬 Cause / Description{% endif %}</h3>
+<p>{{ cause|default('No description available.',true) }}</p>
+</div>
+
+<div class="info-box">
+<h3>{% if language == 'kn' %}🌱 ಶಿಫಾರಸು ಮಾಡಿದ ಕ್ರಮ{% elif language == 'hi' %}🌱 अनुशंसित कार्रवाई{% else %}🌱 Recommended Action{% endif %}</h3>
+<p>{{ advice|default('No recommendation available.',true) }}</p>
+</div>
+
+<div class="info-box">
+<h3>{% if language == 'kn' %}⚠️ ಪ್ರಮುಖ ಸೂಚನೆ{% elif language == 'hi' %}⚠️ महत्वपूर्ण सूचना{% else %}⚠️ Important Note{% endif %}</h3>
+<p>{% if language == 'kn' %}ಇದು AI ಆಧಾರಿತ ಮುನ್ಸೂಚನೆ. ಚಿಕಿತ್ಸೆ ನೀಡುವ ಮೊದಲು ಸ್ಥಳೀಯ ಕೃಷಿ ತಜ್ಞರಿಂದ ರೋಗದ ದೃಢೀಕರಣ ಪಡೆಯಿರಿ.{% elif language == 'hi' %}यह AI आधारित अनुमान है। उपचार करने से पहले स्थानीय कृषि विशेषज्ञ से रोग की पुष्टि कराएँ।{% else %}This is an AI-based prediction. Confirm the diagnosis with a qualified agricultural expert before treatment.{% endif %}</p>
+</div>
+</div>
+
+<div class="model-class">
+<strong>{% if language == 'kn' %}ಮಾದರಿ ವರ್ಗ:{% elif language == 'hi' %}मॉडल वर्ग:{% else %}Model Class:{% endif %}</strong>
+{{ model_class|default('Unknown') }}
+</div>
+
+<div class="actions">
+<a class="btn secondary" href="{{ url_for('dashboard') }}">{% if language == 'kn' %}ಡ್ಯಾಶ್‌ಬೋರ್ಡ್{% elif language == 'hi' %}डैशबोर्ड{% else %}Dashboard{% endif %}</a>
+<a class="btn primary" href="{{ url_for('disease_detection') }}">{% if language == 'kn' %}ಮತ್ತೊಂದು ವಿಶ್ಲೇಷಣೆ{% elif language == 'hi' %}फिर से विश्लेषण करें{% else %}Analyze Another{% endif %}</a>
+</div>
+</div>
+</section>
+</main>
+
+<script>
+(function () {
+    const fill = document.getElementById("confidenceFill");
+    if (!fill) return;
+
+    let confidence = Number.parseFloat(fill.dataset.confidence);
+    if (!Number.isFinite(confidence)) confidence = 0;
+
+    confidence = Math.max(0, Math.min(100, confidence));
+    fill.style.width = confidence + "%";
+})();
+
+const languageSelect = document.getElementById("languageSelect");
+
+if (languageSelect) {
+    languageSelect.addEventListener("change", function () {
+        const selectedLanguage = this.value;
+
+        // GET only: re-displays the saved prediction in another language.
+        // The /disease-result route does NOT call the ML model again.
+        const resultUrl = new URL(
+            "{{ url_for('disease_result') }}",
+            window.location.origin
+        );
+
+        resultUrl.searchParams.set("lang", selectedLanguage);
+        window.location.assign(resultUrl.toString());
+    });
+}
+</script>
+</body>
+</html>

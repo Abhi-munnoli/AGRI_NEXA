@@ -1,0 +1,1 @@
+document.addEventListener('DOMContentLoaded',()=>{const f=document.getElementById('farmForm');if(f)f.addEventListener('submit',e=>{const h=+f.humidity.value,m=+f.soil_moisture.value,p=+f.soil_ph.value;if(h<0||h>100||m<0||m>100||p<0||p>14){alert('Enter valid humidity, soil moisture and pH values.');e.preventDefault();}})});

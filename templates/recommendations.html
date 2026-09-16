@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ t('prediction_result') }} | {{ t('app_name') }}</title>
+<style>
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#f3f7f3;color:#17251b}
+.container{width:min(1100px,92%);margin:40px auto}
+.card{background:#fff;border:1px solid #e3ebe4;border-radius:22px;padding:30px;box-shadow:0 12px 35px rgba(25,60,30,.07)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+.box{background:#fbfdfb;border:1px solid #e1eae2;border-radius:16px;padding:20px}
+.future{border:2px solid #b9d8bd;background:#eef8ef}
+small{display:block;color:#77837b;margin-bottom:8px}
+strong{font-size:20px}
+@media(max-width:800px){.grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+
+.actions{display:flex;gap:12px;margin-top:28px}
+.btn{flex:1;min-height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;text-decoration:none;font-weight:800;font-size:14px}
+.primary{color:#fff;background:linear-gradient(135deg,#28752f,#4d9b55)}
+.secondary{color:#2e7d32;background:#edf7ef;border:1px solid #cfe3d2}
+@media(max-width:600px){.actions{flex-direction:column}}
+</style>
+</head>
+<body>
+<main class="container">
+<div class="card">
+<h1>🌾 {{ t('prediction_result') }}</h1>
+<p>{{ crop }} · {{ area }} {{ t('acre') }}</p>
+
+<div class="grid">
+<div class="box"><small>{{ t('predicted_yield') }}</small><strong>{{ prediction|default(0)|float|round(2) }} ton/ha</strong></div>
+<div class="box"><small>{{ t('production') }}</small><strong>{{ production|default(0)|float|round(2) }} ton</strong></div>
+
+<div class="box future">
+<small>🔮 Expected Future Profit</small>
+<strong>₹ {{ "{:,.0f}".format((expected_future_profit|default(expected_profit|default(0))|float)) }}</strong>
+</div>
+
+<div class="box"><small>🔮 Future Market Price</small><strong>₹ {{ "{:,.0f}".format((future_price_per_ton|default(0)|float)) }}/ton</strong></div>
+<div class="box"><small>Future Revenue</small><strong>₹ {{ "{:,.0f}".format((future_revenue|default(0)|float)) }}</strong></div>
+<div class="box"><small>Future Cost</small><strong>₹ {{ "{:,.0f}".format((future_cost|default(0)|float)) }}</strong></div>
+
+<div class="box"><small>{{ t('drought_risk') }}</small><strong>{{ drought_risk|default('N/A') }}</strong></div>
+<div class="box"><small>{{ t('pest_risk') }}</small><strong>{{ pest_risk|default('N/A') }}</strong></div>
+<div class="box"><small>{{ t('overall_risk') }}</small><strong>{{ overall_risk|default('N/A') }}</strong></div>
+</div>
+
+<div class="box" style="margin-top:18px">
+<h2>🔮 Expected Future Profit</h2>
+<p>Future profit is estimated using predicted production, a one-year future price estimate, projected production cost, and the agricultural risk level. Higher risk produces a more conservative profit estimate.</p>
+</div>
+
+<div class="box" style="margin-top:18px"><h2>🧪 {{ t('fertilizer') }}</h2><p>{{ fertilizer_recommendation|default('') }}</p></div>
+<div class="box" style="margin-top:18px"><h2>💧 {{ t('irrigation') }}</h2><p>{{ irrigation_recommendation|default('') }}</p></div>
+<div class="box" style="margin-top:18px"><h2>🌱 {{ t('crop_advice') }}</h2><p>{{ crop_advice|default('') }}</p></div>
+
+<div class="actions">
+    <a class="btn primary" href="{{ url_for('farm_details') }}">
+        🌾 {{ t('new_prediction') }}
+    </a>
+    <a class="btn secondary" href="{{ url_for('dashboard') }}">
+        🏠 {{ t('back_dashboard') }}
+    </a>
+</div>
+</div>
+</main>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ t('disease_detection') }} | {{ t('app_name') }}</title>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#f3f7f3;color:#17251b}
+.navbar{height:74px;background:#fff;border-bottom:1px solid #e3ebe4;display:flex;align-items:center;justify-content:space-between;padding:0 6%;position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#246b2a;font-size:22px;font-weight:800}
+.brand-icon{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#2e7d32,#66bb6a);display:grid;place-items:center;font-size:22px}
+.nav-actions{display:flex;align-items:center;gap:12px}.language{display:inline-flex;align-items:center;gap:5px;background:#f1f6f2;border:1px solid #dfe8e0;padding:7px 10px;border-radius:10px}.language select{border:0;background:transparent;font-weight:600;outline:0}.user{font-size:13px;color:#617066;font-weight:600}.logout{background:#26362b;color:#fff;text-decoration:none;padding:9px 14px;border-radius:9px;font-size:13px;font-weight:700}
+.container{width:min(1100px,92%);margin:40px auto}.card{background:#fff;border:1px solid #e3ebe4;border-radius:22px;padding:30px;box-shadow:0 12px 35px rgba(25,60,30,.07)}
+h1{margin:0 0 8px;font-size:32px}h2{margin:0 0 8px}p{color:#68756c;line-height:1.65}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.field{display:flex;flex-direction:column;gap:8px}.field label{font-size:13px;font-weight:700}.field input,.field select{padding:13px;border:1px solid #dbe5dc;border-radius:10px;background:#fbfdfb;font:inherit;outline:none}.field input:focus,.field select:focus{border-color:#4b9954;box-shadow:0 0 0 4px #4b995414}
+.btn{border:0;background:linear-gradient(135deg,#28752f,#4d9b55);color:#fff;padding:13px 18px;border-radius:11px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}.secondary{background:#66756c!important}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}.cards,.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}.mini,.result{background:#fbfdfb;border:1px solid #e1eae2;border-radius:16px;padding:20px}.mini .emoji{font-size:30px}.result small{display:block;color:#77837b;margin-bottom:8px}.result strong{font-size:20px}.advice{margin-top:18px;padding:20px;border-radius:16px;background:#eef7ef}.upload{border:2px dashed #b9d2bc;border-radius:18px;padding:35px;text-align:center;background:#f9fcf9}.history{overflow-x:auto}.history table{width:100%;border-collapse:collapse;min-width:850px}.history th,.history td{padding:12px;border-bottom:1px solid #e5ebe6;text-align:left;white-space:nowrap}.history th{background:#eef5ef;font-size:12px}
+@media(max-width:800px){.cards,.result-grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.grid,.cards,.result-grid{grid-template-columns:1fr}.user{display:none}.navbar{padding:0 4%}.container{margin-top:25px}.card{padding:22px}}
+</style>
+<script>
+function changeLanguage(lang){
+ const next=encodeURIComponent(window.location.pathname+window.location.search);
+ window.location.href="/set-language/"+lang+"?next="+next;
+}
+</script>
+
+</head>
+<body>
+
+<nav class="navbar">
+<a class="brand" href="{{ url_for('dashboard') }}"><span class="brand-icon">🌾</span><span>{{ t('app_name') }}</span></a>
+<div class="nav-actions">
+<div class="language">🌐 <select onchange="changeLanguage(this.value)">
+<option value="en" {% if current_lang=='en' %}selected{% endif %}>English</option>
+<option value="kn" {% if current_lang=='kn' %}selected{% endif %}>ಕನ್ನಡ</option>
+<option value="hi" {% if current_lang=='hi' %}selected{% endif %}>हिन्दी</option>
+</select></div>
+{% if session.get('user') %}<span class="user">{{ session.get('name','User') }}</span><a class="logout" href="{{ url_for('logout') }}">{{ t('logout') }}</a>{% endif %}
+</div></nav>
+
+
+<main class="container"><div class="card"><h1>🦠 {{ t('disease_detection') }}</h1><p>Upload a clear crop leaf image for AI-based disease analysis.</p>
+<form method="POST" action="{{ url_for('analyze') }}" enctype="multipart/form-data"><div class="upload">📷<h2>{{ t('choose_image') }}</h2><input type="file" name="crop_image" accept=".jpg,.jpeg,.png" required></div>
+<div class="actions"><button class="btn" type="submit">🔍 {{ t('analyze_disease') }}</button><a class="btn secondary" href="{{ url_for('dashboard') }}">← {{ t('back_dashboard') }}</a></div></form>
+</div></main>
+
+</body>
+</html>

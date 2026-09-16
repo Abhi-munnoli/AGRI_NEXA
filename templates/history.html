@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="{{ current_lang|default('en') }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ t('view_history') }} | {{ t('app_name') }}</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#f3f7f3;color:#17251b}
+.navbar{height:74px;background:#fff;border-bottom:1px solid #e3ebe4;display:flex;align-items:center;justify-content:space-between;padding:0 6%;position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#246b2a;font-size:22px;font-weight:800}
+.brand-icon{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#2e7d32,#66bb6a);display:grid;place-items:center;font-size:22px}
+.nav-actions{display:flex;align-items:center;gap:12px}
+.language{display:inline-flex;align-items:center;gap:5px;background:#f1f6f2;border:1px solid #dfe8e0;padding:7px 10px;border-radius:10px}
+.language select{border:0;background:transparent;font-weight:600;outline:0}
+.user{font-size:13px;color:#617066;font-weight:600}
+.logout{background:#26362b;color:#fff;text-decoration:none;padding:9px 14px;border-radius:9px;font-size:13px;font-weight:700}
+.container{width:min(1200px,94%);margin:40px auto}
+.card{background:#fff;border:1px solid #e3ebe4;border-radius:22px;padding:30px;box-shadow:0 12px 35px rgba(25,60,30,.07)}
+h1{margin:0 0 8px;font-size:32px}
+.subtitle{color:#68756c;line-height:1.65;margin-top:0}
+.history{overflow-x:auto;margin-top:24px}
+table{width:100%;border-collapse:collapse;min-width:1150px}
+th,td{padding:13px 12px;border-bottom:1px solid #e5ebe6;text-align:left;white-space:nowrap}
+th{background:#eef5ef;font-size:12px;color:#435248}
+td{font-size:14px}
+.profit{font-weight:800;color:#246b2a}
+.risk{font-weight:700}
+.empty{text-align:center;padding:35px;color:#77837b}
+.actions{display:flex;gap:12px;margin-top:24px}
+.btn{flex:1;min-height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;text-decoration:none;font-weight:800;font-size:14px}
+.primary{color:#fff;background:linear-gradient(135deg,#28752f,#4d9b55)}
+.secondary{color:#2e7d32;background:#edf7ef;border:1px solid #cfe3d2}
+@media(max-width:600px){.actions{flex-direction:column}.container{margin-top:25px}.card{padding:22px}}
+</style>
+<script>
+function changeLanguage(lang){
+ const next=encodeURIComponent(window.location.pathname+window.location.search);
+ window.location.href="/set-language/"+lang+"?next="+next;
+}
+</script>
+</head>
+<body>
+
+<nav class="navbar">
+<a class="brand" href="{{ url_for('dashboard') }}">
+<span class="brand-icon">🌾</span>
+<span>{{ t('app_name') }}</span>
+</a>
+<div class="nav-actions">
+<div class="language">🌐
+<select onchange="changeLanguage(this.value)">
+<option value="en" {% if current_lang|default('en')=='en' %}selected{% endif %}>English</option>
+<option value="kn" {% if current_lang|default('en')=='kn' %}selected{% endif %}>ಕನ್ನಡ</option>
+<option value="hi" {% if current_lang|default('en')=='hi' %}selected{% endif %}>हिन्दी</option>
+</select>
+</div>
+{% if session.get('user') %}
+<span class="user">{{ session.get('name','User') }}</span>
+<a class="logout" href="{{ url_for('logout') }}">{{ t('logout') }}</a>
+{% endif %}
+</div>
+</nav>
+
+<main class="container">
+<div class="card">
+<h1>📊 {{ t('view_history') }}</h1>
+
+<p class="subtitle">
+{% if current_lang|default('en')=='kn' %}
+ನಿಮ್ಮ ಹಿಂದಿನ ಇಳುವರಿ ಮುನ್ಸೂಚನೆಗಳ ಇತಿಹಾಸ.
+{% elif current_lang|default('en')=='hi' %}
+आपके पिछले उपज पूर्वानुमानों का इतिहास।
+{% else %}
+Your previous crop yield prediction history.
+{% endif %}
+</p>
+
+<div class="history">
+<table>
+<thead>
+<tr>
+<th>
+{% if current_lang|default('en')=='kn' %}ದಿನಾಂಕ
+{% elif current_lang|default('en')=='hi' %}दिनांक
+{% else %}Date{% endif %}
+</th>
+<th>{{ t('crop') }}</th>
+<th>{{ t('area') }}</th>
+<th>{{ t('predicted_yield') }}</th>
+<th>{{ t('production') }}</th>
+<th>
+{% if current_lang|default('en')=='kn' %}ಭವಿಷ್ಯದ ನಿರೀಕ್ಷಿತ ಲಾಭ (₹)
+{% elif current_lang|default('en')=='hi' %}भविष्य का अनुमानित लाभ (₹)
+{% else %}Expected Future Profit (₹){% endif %}
+</th>
+<th>{{ t('drought_risk') }}</th>
+<th>{{ t('pest_risk') }}</th>
+<th>{{ t('overall_risk') }}</th>
+</tr>
+</thead>
+
+<tbody>
+{% for record in records|default([]) %}
+
+{% set area_value = record.get('area_acre', record.get('area', 0)) or 0 %}
+{% set yield_value = record.get('predicted_yield', record.get('prediction', 0)) or 0 %}
+{% set production_value = record.get('estimated_total_yield', record.get('production', 0)) or 0 %}
+{% set profit_value = record.get('expected_future_profit',
+    record.get('expected_profit',
+    record.get('estimated_profit', 0))) or 0 %}
+
+<tr>
+<td>{{ record.get('created_at_display', record.get('created_at','N/A')) }}</td>
+
+<td>{{ record.get('crop', record.get('Crop','N/A')) }}</td>
+
+<td>{{ '%.2f'|format(area_value|float) }} {{ t('acre') }}</td>
+
+<td>{{ '%.3f'|format(yield_value|float) }} ton/ha</td>
+
+<td>{{ '%.3f'|format(production_value|float) }} ton</td>
+
+<td class="profit">
+₹ {{ '{:,.0f}'.format(profit_value|float) }}
+</td>
+
+<td class="risk">{{ record.get('drought_risk','N/A') }}</td>
+
+<td class="risk">{{ record.get('pest_risk','N/A') }}</td>
+
+<td class="risk">{{ record.get('overall_risk','N/A') }}</td>
+</tr>
+
+{% else %}
+<tr>
+<td colspan="9" class="empty">
+{% if current_lang|default('en')=='kn' %}
+ಯಾವುದೇ ಮುನ್ಸೂಚನೆ ಇತಿಹಾಸ ಲಭ್ಯವಿಲ್ಲ.
+{% elif current_lang|default('en')=='hi' %}
+कोई पूर्वानुमान इतिहास उपलब्ध नहीं है।
+{% else %}
+No prediction history available.
+{% endif %}
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+<div class="actions">
+<a class="btn primary" href="{{ url_for('farm_details') }}">
+🌾 {{ t('new_prediction') }}
+</a>
+<a class="btn secondary" href="{{ url_for('dashboard') }}">
+🏠 {{ t('back_dashboard') }}
+</a>
+</div>
+
+</div>
+</main>
+</body>
+</html>
