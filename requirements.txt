@@ -1,0 +1,8 @@
+Flask
+firebase-admin
+pandas
+numpy
+scikit-learn
+tensorflow
+Pillow
+datasets
